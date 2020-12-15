@@ -1,0 +1,209 @@
+import pygame
+import random
+import time
+import os
+
+Width = 800
+Height = 600
+FPS = 30
+x = 0
+GROUND = Height - 30
+
+
+
+PLAYER_ACC = 0.9
+PLAYER_FRICTION = -0.12
+PLAYER_GRAV = 0.9
+vec = pygame.math.Vector2
+
+
+
+
+red = (130, 14, 4)
+black = (0, 0, 0)
+blue = (3, 76, 135)
+
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder, "img")
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "p1_jump.png")).convert()
+        self.image.set_colorkey(black)
+        self.rect = self.image.get_rect()
+        self.rect.center = (Width / 2, Height / 2)
+        self.y_speed = 5
+        self.radius = 20
+        self.rect.centerx = Width / 2
+        self.rect.bottom = Height - 10
+        self.speedx = 0
+        self.sheild = 100
+        self.shoot_delay = 250
+        self.last_shot = pygame.time.get_ticks()
+
+        self.pos = vec(10, GROUND -60)
+        self.vel = vec(0, 0)
+        self.acc = vec(0,0)
+
+
+    def update(self):
+        self.acc = vec(0, PLAYER_GRAV)
+        
+        keystate = pygame.key.get_pressed()
+
+        if keystate[pygame.K_RIGHT]:
+            self.acc.x += 0.9
+        if keystate[pygame.K_LEFT]:
+            self.acc.x += -0.9
+        if keystate[pygame.K_UP]:
+            self.rect.y += -5
+        if keystate[pygame.K_DOWN]:
+            self.rect.y += 5
+        if self.vel.y == 0 and keystate[pygame.K_SPACE]:
+            self.vel.y = -20
+
+        self.acc.x += self.vel.x * PLAYER_FRICTION
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+
+        if self.rect.right > Width:
+            self.rect.left = 0
+        if self.rect.left < 0:
+            self.rect.right = Width
+
+        if self.pos.y > GROUND:
+            self.pos.y = GROUND + 1
+            self.vel.y =0
+
+        self.rect.midbottom = self.pos
+ 
+
+class Platform(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "images.jfif")).convert()
+        self.image.set_colorkey(blue)
+        self.rect = self.image.get_rect()
+        self.rect.x = 800
+        self.rect.center = (Width / 2, Height / 2)
+        self.x_speed = 5
+
+    def update():
+        self.acc = vec(0, PLAYER_GRAV)
+        self.rect.x(-5)
+        if self.rect.right < 0:
+            self.rect.left = Width
+
+   
+
+
+        
+       
+
+
+
+
+pygame.init()
+pygame.mixer.init()
+screen = pygame.display.set_mode((Width, Height))
+pygame.display.set_caption("I have no idea what this is either")
+
+clock = pygame.time.Clock()
+
+bkgr_image = pygame.image.load(os.path.join(img_folder, "3306-4254-6617.jpg")).convert()
+background = pygame.transform.scale(bkgr_image, (Width, Height))
+background_rect = background.get_rect()
+
+all_sprites = pygame.sprite.Group()
+player = Player()
+platform = Platform()
+all_sprites.add(player)
+
+
+running = True
+while running:
+    clock.tick(FPS)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    all_sprites.update()
+
+    screen.blit(background, background_rect)
+    all_sprites.draw(screen)
+
+    pygame.display.flip()
+
+pygame.quit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#oh wow. you actually scrolled down here
+#uh... congrats?
