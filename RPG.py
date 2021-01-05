@@ -3,13 +3,37 @@ import random
 import time
 import os
 
+def show_start_screen():
+    screen.fill(blue)
+    draw_text(screen, "Just... Run Around, I Guess.", 64, Width / 2, Height / 4)
+    draw_text(screen, "Use the arrow keys to move", 22, Width / 2, Height / 4)
+    draw_text(screen, "Just press any key to start", 18, Width / 2, Height * 3 / 4)
+    pygame.display.flip()
+
+    waiting = True
+    while waiting:
+        clock.tick(FPS)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYUP:
+                print("Don't worry, I'll pay for your therapy bills (I won't).")
+                waiting = False
+
 Width = 800
 Height = 600
 FPS = 30
 x = 0
 GROUND = Height - 30
 
-
+font_name = pygame.font.match_font('arial')
+def draw_text(surf, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, red)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
 
 PLAYER_ACC = 0.9
 PLAYER_FRICTION = -0.12
@@ -25,6 +49,8 @@ blue = (3, 76, 135)
 
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, "img")
+
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -121,13 +147,21 @@ platform = Platform()
 all_sprites.add(player)
 
 
+
+start = True
 running = True
 while running:
+    if start:
+        show_start_screen
+        start - False
+
     clock.tick(FPS)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+
 
     all_sprites.update()
 
