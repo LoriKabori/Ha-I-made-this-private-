@@ -120,6 +120,42 @@ class Platform(pygame.sprite.Sprite):
         self.rect.x(-5)
         if self.rect.right < 0:
             self.rect.left = Width
+            
+ class Healthbar(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.healthbars = [
+            pygame.image.load(os.path.join(img_folder, "Hp5.PNG")).convert(),
+            pygame.image.load(os.path.join(img_folder, "Hp4.PNG")).convert(),
+            pygame.image.load(os.path.join(img_folder, "Hp3.PNG")).convert(),
+            pygame.image.load(os.path.join(img_folder, "Hp2.PNG")).convert(),
+            pygame.image.load(os.path.join(img_folder, "Hp1.PNG")).convert(),
+            pygame.image.load(os.path.join(img_folder, "Hp0.PNG")).convert()
+            ]
+        self.healthbar_count = 0
+
+        self.image = self.healthbars[self.healthbar_count]
+        self.image = pygame.transform.scale(self.image, (100, 50))
+        self.image.set_colorkey(black)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = 10
+        self.rect.y = 10
+
+    def setHealth(self):
+        return self.healthbar_count
+
+    def setHealth(self, health):
+        if health == 1:
+            self.healthbar_count -= 1
+            if self.healthbar_count < 0:
+                self.healthbar_count = 5
+
+    def update(self):
+        self.image = self.healthbars[self.healthbar_count]
+        self.image = pygame.transform.scale(self.image, (100, 50))
+        self.image.set_colorkey(black)
 
    
 
