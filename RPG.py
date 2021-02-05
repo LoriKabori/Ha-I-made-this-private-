@@ -86,8 +86,10 @@ class Player(pygame.sprite.Sprite):
             self.rect.y += -5
         if keystate[pygame.K_DOWN]:
             self.rect.y += 5
-        if self.vel.y == 0 and keystate[pygame.K_SPACE]:
+        if self.vel.y == 0 and keystate[pygame.K_UP]:
             self.vel.y = -20
+        if keystate[pygame.K_SPACE]:
+            self_shoot()
 
         self.acc.x += self.vel.x * PLAYER_FRICTION
         self.vel += self.acc
@@ -103,7 +105,56 @@ class Player(pygame.sprite.Sprite):
             self.vel.y =0
 
         self.rect.midbottom = self.pos
- 
+
+        img_folder = os.path.join(game_folder, "target.PNG")
+        mouseState = pygame.mouse.get_pressed()
+        if mouseState[0] == 1:
+            pos = pygame.mouse.get_pos()
+            mouse_x = pos[0]
+            mouse_y = pos[1]
+
+
+    def shoot(self):
+        now = pygame.time.get.ticks()
+        if now - self.last_shot > self.shoot_delay:
+            self.last_shot = now
+            bullet = Bullet(self.rect.centerx, self.rect.top)
+            all_sprites.add(bullet)
+            bullets.add(bullet)
+
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "laser.PNG")).convert()
+        self.image.set_colorkey(black)
+
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speedy = -10
+
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.bottom < 0:
+            self.kill()
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join(img_folder, "enemy.PNG")).convert()
+        self.image.set_colorkey(black)
+
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speedy = -5
+
+        def update(self):
+            self.rect.y += self.speedy
+            if self.rect.bottom < 0:
+                self.kill()
+            
+
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self):
@@ -120,8 +171,8 @@ class Platform(pygame.sprite.Sprite):
         self.rect.x(-5)
         if self.rect.right < 0:
             self.rect.left = Width
-            
- class Healthbar(pygame.sprite.Sprite):
+
+class Healthbar(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
@@ -179,8 +230,11 @@ background_rect = background.get_rect()
 
 all_sprites = pygame.sprite.Group()
 player = Player()
-platform = Platform()
 all_sprites.add(player)
+healthbar = Healthbar()
+all_sprites.add(healthbar)
+platform = Platform()
+all_sprites.add(platform)
 
 
 
@@ -197,9 +251,10 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    all_sprites.update
+    screen.blit(background, background_rect)
+    all_sprites.draw(screen)
 
-
-    all_sprites.update()
 
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
@@ -207,73 +262,3 @@ while running:
     pygame.display.flip()
 
 pygame.quit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#oh wow. you actually scrolled down here
-#uh... congrats?
